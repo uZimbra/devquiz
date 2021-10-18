@@ -1,42 +1,61 @@
-import 'package:DevQuiz/challenge/widgets/answer.widget.dart';
-import 'package:DevQuiz/core/core.dart';
 import 'package:flutter/material.dart';
 
-class QuizWidget extends StatelessWidget {
-  final String title;
-  const QuizWidget({Key? key, required this.title}) : super(key: key);
+import 'package:DevQuiz/challenge/widgets/answer.widget.dart';
+import 'package:DevQuiz/core/core.dart';
+import 'package:DevQuiz/shared/models/answer.model.dart';
+import 'package:DevQuiz/shared/models/question.model.dart';
+
+class QuizWidget extends StatefulWidget {
+  final QuestionModel question;
+  final VoidCallback onChange;
+
+  const QuizWidget({
+    Key? key,
+    required this.question,
+    required this.onChange,
+  }) : super(key: key);
+
+  @override
+  State<QuizWidget> createState() => _QuizWidgetState();
+}
+
+class _QuizWidgetState extends State<QuizWidget> {
+  int selectedAnswer = -1;
+
+  AnswerModel answer(int index) => this.widget.question.answers[index];
 
   @override
   Widget build(BuildContext context) {
     return Container(
         child: Column(
       children: [
+        SizedBox(
+          height: 64,
+        ),
         Text(
-          title,
+          this.widget.question.title,
           style: AppTextStyles.heading,
         ),
         SizedBox(
           height: 24,
         ),
-        Column(
-          children: [
-            AnswerWidget(
-              title: "Kit de desenvolvimento de interface de usuário",
-              isSelected: true,
-              isCorrect: true,
-            ),
-            AnswerWidget(
-                isSelected: true,
-                title:
-                    "Possibilita a criação de aplicativos compilados nativamente"),
-            AnswerWidget(
-              title: "Acha que é uma marca de café do Himalaia",
-            ),
-            AnswerWidget(
-                title:
-                    "Possibilita a criação de desktops que são muito incríveis"),
-          ],
-        ),
+        for (int i = 0; i < this.widget.question.answers.length; i++)
+          AnswerWidget(
+            answer: this.answer(i),
+            isDisabled: selectedAnswer != -1,
+            isSelected: selectedAnswer == i,
+            onPress: () {
+              selectedAnswer = i;
+
+              Future.delayed(
+                Duration(seconds: 1),
+              ).then(
+                (value) => this.widget.onChange(),
+              );
+
+              setState(() {});
+            },
+          )
       ],
     ));
   }

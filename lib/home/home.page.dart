@@ -1,3 +1,4 @@
+import 'package:DevQuiz/challenge/challenge.page.dart';
 import 'package:DevQuiz/core/app_colors.dart';
 import 'package:DevQuiz/home/home.state.dart';
 import 'package:DevQuiz/home/widgets/app-bar.widget.dart';
@@ -52,19 +53,33 @@ class _HomePageState extends State<HomePage> {
                 height: 24,
               ),
               Expanded(
-                  child: GridView.count(
-                      crossAxisSpacing: 16,
-                      mainAxisSpacing: 16,
-                      crossAxisCount: 2,
-                      children: controller.quizzes!
-                          .map((e) => QuizCardWidget(
-                                title: e.title,
-                                progress:
-                                    '${e.numberOfQuestionsAnswered} de ${e.questions.length}',
-                                percentage: e.numberOfQuestionsAnswered /
-                                    e.questions.length,
-                              ))
-                          .toList()))
+                child: GridView.count(
+                  crossAxisSpacing: 16,
+                  mainAxisSpacing: 16,
+                  crossAxisCount: 2,
+                  children: [
+                    ...controller.quizzes!.map(
+                      (e) => QuizCardWidget(
+                        title: e.title,
+                        progress:
+                            '${e.numberOfQuestionsAnswered} de ${e.questions.length}',
+                        percentage:
+                            e.numberOfQuestionsAnswered / e.questions.length,
+                        onPress: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ChallengePage(
+                                questions: e.questions,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    )
+                  ],
+                ),
+              ),
             ],
           ),
         ),
