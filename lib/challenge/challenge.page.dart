@@ -1,4 +1,5 @@
 import 'package:DevQuiz/challenge/challenge.controller.dart';
+import 'package:DevQuiz/result/result.page.dart';
 import 'package:flutter/material.dart';
 
 import 'package:DevQuiz/challenge/widgets/next-button.widget.dart';
@@ -8,10 +9,12 @@ import 'package:DevQuiz/shared/models/question.model.dart';
 
 class ChallengePage extends StatefulWidget {
   final List<QuestionModel> questions;
+  final String title;
 
   ChallengePage({
     Key? key,
     required this.questions,
+    required this.title,
   }) : super(key: key);
 
   @override
@@ -30,11 +33,20 @@ class _ChallengePageState extends State<ChallengePage> {
     });
   }
 
-  void nextPage() {
-    indexController.nextPage(
-      duration: Duration(milliseconds: 200),
-      curve: Curves.easeIn,
-    );
+  void nextPage() async {
+    await Future.delayed(Duration(seconds: 2));
+
+    if (controller.currentIndex < this.widget.questions.length)
+      indexController.nextPage(
+        duration: Duration(milliseconds: 200),
+        curve: Curves.easeIn,
+      );
+  }
+
+  void onPress(bool value) {
+    if (value) this.controller.hits++;
+
+    nextPage();
   }
 
   @override
@@ -65,7 +77,7 @@ class _ChallengePageState extends State<ChallengePage> {
           ...this.widget.questions.map(
                 (e) => QuizWidget(
                   question: e,
-                  onChange: this.nextPage,
+                  onPress: this.onPress,
                 ),
               ),
         ],
@@ -93,9 +105,18 @@ class _ChallengePageState extends State<ChallengePage> {
                 if (value == this.widget.questions.length)
                   Expanded(
                     child: NextButtonWidget.green(
-                      label: 'Voltar',
+                      label: 'Confirmar',
                       onPress: () {
-                        Navigator.pop(context);
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => ResultPage(
+                              title: this.widget.title,
+                              length: this.widget.questions.length,
+                              hits: this.controller.hits,
+                            ),
+                          ),
+                        );
                       },
                     ),
                   ),

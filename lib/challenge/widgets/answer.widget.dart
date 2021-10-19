@@ -5,7 +5,7 @@ import 'package:DevQuiz/shared/models/answer.model.dart';
 
 class AnswerWidget extends StatelessWidget {
   final AnswerModel answer;
-  final VoidCallback onPress;
+  final ValueChanged<bool> onPress;
   final bool isDisabled;
   final bool isSelected;
 
@@ -43,7 +43,7 @@ class AnswerWidget extends StatelessWidget {
       child: IgnorePointer(
         ignoring: isDisabled,
         child: GestureDetector(
-          onTap: onPress,
+          onTap: () => onPress(this.answer.isCorrect),
           child: Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -66,18 +66,21 @@ class AnswerWidget extends StatelessWidget {
                   width: 24,
                   height: 24,
                   decoration: BoxDecoration(
-                      color: isSelected ? _correctColor : AppColors.white,
-                      borderRadius: BorderRadius.circular(500),
-                      border: Border.fromBorderSide(BorderSide(
+                    color: isSelected ? _correctColor : AppColors.white,
+                    borderRadius: BorderRadius.circular(500),
+                    border: Border.fromBorderSide(
+                      BorderSide(
                           color:
-                              isSelected ? _correctBorder : AppColors.border))),
+                              isSelected ? _correctBorder : AppColors.border),
+                    ),
+                  ),
                   child: isSelected
                       ? Icon(
                           _correctIcon,
                           size: 16,
                         )
                       : null,
-                )
+                ),
               ],
             ),
           ),
